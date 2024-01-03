@@ -19,6 +19,7 @@ public class HateSameNumber {
                     stack.push(i);
                 }
             }
+            // 스트림
             return stack.stream().mapToInt(i -> i).toArray();
         }
     }

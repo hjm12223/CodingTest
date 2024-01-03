@@ -11,6 +11,7 @@ public class phoneBook {
         System.out.println("solution = " + solution);
     }
     public static boolean solution(String[] phone_book) {
+        // Trie 자료구조 사용해보기
         Map<String,Integer> map = new HashMap<>();
         Arrays.sort(phone_book);
      for (int i = 0 ; i < phone_book.length-1 ; i++) {

@@ -10,6 +10,7 @@ public class costume {
         System.out.println("i = " + i);
     }
 
+    // 컴비네이션 공부, 순열 공부
     public static int solution(String[][] clothes) {
         int answer = 1;
         HashMap<String,Integer> map = new HashMap<>();

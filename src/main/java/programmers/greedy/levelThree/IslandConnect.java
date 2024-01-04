@@ -7,13 +7,13 @@ public class IslandConnect {
         int solution = solution(4, new int[][]{{0, 1, 1}, {0, 2, 2}, {1, 2, 5}, {1, 3, 1}, {2, 3, 8}});
         System.out.println("solution = " + solution);
     }
-
+    //크루스칼 알고리즘 사용
     public static int solution(int n, int[][] costs) {
-        List<Island> islandList = new LinkedList<>();
-        int totalCost = 0;
-        int[] parent = new int[n];
+        List<Island> islandList = new LinkedList<>(); // 섬을 담을 리스트를 선언
+        int totalCost = 0; // 총 간선들의 최소 비용 선언
+        int[] parent = new int[n]; // 해당 노드들의 부모를 담을 parent 선언
         for (int i = 0 ; i < parent.length ; i++){
-            parent[i] = i;
+            parent[i] = i; // parent 안에는 해당 인덱스값들을 넣음
         }
 
 
@@ -22,13 +22,13 @@ public class IslandConnect {
             islandList.add(islands);
         }
 
-        islandList.sort(Comparator.comparingInt(o -> o.cost));
+        islandList.sort((o1, o2) -> Integer.compare(o1.cost,o2.cost)); // 해당 간선들의 cost 를 기준으로 오름차순 정렬
 
 
-        for (Island island : islandList) {
-            if (find(parent,island.island) != find(parent,island.nextIsland)){
-                union(parent, island.island, island.nextIsland);
-                totalCost+= island.cost;
+        for (Island island : islandList) { // 섬리스트에 저장된 섬들을 꺼내줌
+            if (find(parent,island.island)  != find(parent,island.nextIsland)){ // 현재 섬의 부모와, 다음섬의 부모가 같지 않다면
+                 union(parent, island.island, island.nextIsland); // 해당 노드들을 union 시켜줌
+                totalCost+= island.cost; // 토탈 코스트를 더해준다
             }
         }
 
@@ -39,20 +39,23 @@ public class IslandConnect {
 
 
     private static void union(int[] parent, int a,int b){
-        int aParent = find(parent,a);
-        int bParent = find(parent,b);
-        if (aParent < bParent){
-            parent[bParent] = parent[aParent];
+        int aParent = find(parent,a); // 변수 a 의 parent 를 선언
+        int bParent = find(parent,b); // b 또한 선언
+        if (aParent < bParent){ // 만약 a 보다 b 의 부모가 클경우
+            parent[bParent] = parent[aParent]; // 해당 인덱스의 부모를 a의 부모로 선언
         }else {
-            parent[aParent] = parent[bParent] ;
+            parent[aParent] = parent[bParent] ; // b의 부모가 더 작을 경우 a 의부모를 경우 b의 부모로 선언
         }
     }
     private static int find(int[] parent, int i) {
-        if (parent[i] != i) {
-            parent[i] = find(parent, parent[i]);
+        if (parent[i] != i) {  // 만약 parent[i] 의 값이 해당 인덱스 값이 아닐경우
+            parent[i] = find(parent, parent[i]); // 해당 인덱스의 부모를 찾음
         }
-        return parent[i];
+        return parent[i]; // 해당 인덱스의 부모를 리턴
     }
+    /**
+     * 이렇게 하는 이유는 초기의 자신이 부모가 될 수 있기때문이다.
+     */
 /*
  0, 1 = 1
  0, 2 = 2

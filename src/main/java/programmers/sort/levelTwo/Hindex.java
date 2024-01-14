@@ -9,6 +9,7 @@ public class Hindex {
     }
     public static int solution(int[] citations) {
         Arrays.sort(citations);
+
         Queue<Integer> queue = new PriorityQueue<>(Collections.reverseOrder());
         // 만약 오름차순으로 하였을 경우 끝자리가 0일경우 인용된 횟수가 0이기 떄문에 0을 리턴
         if (citations[citations.length-1] == 0 ){

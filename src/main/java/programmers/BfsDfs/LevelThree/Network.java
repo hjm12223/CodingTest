@@ -24,7 +24,7 @@ public class Network {
     private static boolean[] dfs(boolean[] isVisited, int[][] computers, int i) {
         isVisited[i] = true;
         for (int j = 0 ; j < computers.length; j++){
-            if (j != i && computers[i][j] == 1 && isVisited[j] == false){
+            if (j != i && computers[i][j] == 1 && !isVisited[j]){
                 isVisited = dfs(isVisited,computers,j);
             }
         }

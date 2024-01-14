@@ -11,7 +11,7 @@ public class TargetNumber {
     }
 
     public static int solution(int[] numbers, int target) {
-        int answer=  0;
+        int answer;
         dfs(numbers, 0, target, 0);
         answer = count;
         return answer;

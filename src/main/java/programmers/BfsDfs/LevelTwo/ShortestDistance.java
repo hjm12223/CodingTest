@@ -16,18 +16,21 @@ public class ShortestDistance {
 
     /**
      * 최단 거리는 대부분 BFS
-     * @param maps
-     * @return
      */
     public static int solution(int[][] maps) {
         int answer = 0;
         int[][] isVisited = new int[maps.length][maps[0].length];
-            dfs(maps,isVisited);
+            bfs(maps,isVisited);
         answer = isVisited[maps.length-1][maps[0].length-1];
         return answer;
     }
 
-    private static void dfs(int[][] maps, int[][] isVisited) {
+    /**
+     * PQ 사용 고려하기
+     * @param maps
+     * @param isVisited
+     */
+    private static void bfs(int[][] maps, int[][] isVisited) {
         Queue<int[]> q = new LinkedList<>();
         q.offer(new int[]{0,0});
         isVisited[0][0] =1;

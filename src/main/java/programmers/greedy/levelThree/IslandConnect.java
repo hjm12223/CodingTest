@@ -60,7 +60,8 @@ public class IslandConnect {
  0, 1 = 1
  0, 2 = 2
  1, 3 = 1
-
+ 다익스트라 알고리즘 공부
+ Prim 알고리즘
  */
     /**
      * 현재 위치를 기반

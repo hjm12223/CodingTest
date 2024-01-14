@@ -15,8 +15,10 @@ public class Carpet2 {
           }
         for (int column = 1 ; column < sqrt ; column++){
             if (sum % column == 0 ){
+
                 System.out.println("i = " + column);
                 int row = sum/column;
+
                 System.out.println("row = " + row);
                     if ((row - 2) * (column - 2) == yellow){
                         return new int[]{row,column};

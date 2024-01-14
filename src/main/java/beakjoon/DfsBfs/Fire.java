@@ -1,112 +1,94 @@
 package beakjoon.DfsBfs;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.StringTokenizer;
 
 public class Fire {
-    static int[] dx = new int[]{1,0,-1,0};
-    static int[] dy = new int[]{0,1,0,-1};
-    static int[][] arr;
+    static int n, m;
+    static char[][] board;
+    static int[][] dist1; // 불의 전파 시간
+    static int[][] dist2; // 지훈이의 이동 시간
+    static int[] dx, dy;
+    static Queue<Pair> Q1;
+    static Queue<Pair> Q2;
 
-    static int[][] dist;
+    public static void main(String[] args) throws IOException {
 
-    static int[][] dist2;
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int row = sc.nextInt();
-        int column = sc.nextInt();
-        arr = new int[column][row];
-        dist = new int [column][row]; // 불
-        dist2 = new int[column][row]; // 지훈
-        Queue<Node> q = new LinkedList<>();
-        Queue<Node> q2 = new LinkedList<>();
-        for (int i = 0; i < column; i++) {
-            String str = sc.next();
-            for (int j = 0; j < row; j++) {
-                arr[i][j] = str.charAt(j);
-                if (str.charAt(j) == 'J') {
-                    q2.offer(new Node(i, j));
-                    dist2[i][j] = 1;
-                } else if (str.charAt(j) == 'F') {
-                    q.offer(new Node(i, j));
-                    dist[i][j] = -1;
-                } else if (str.charAt(j) == '#') {
-                    dist[i][j] = -1;
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            n = Integer.parseInt(st.nextToken());
+            m = Integer.parseInt(st.nextToken());
+
+            board = new char[n][m];
+            dist1 = new int[n][m]; // 불의 전파 시간
+            dist2 = new int[n][m]; // 지훈이의 이동 시간
+            Q1 = new LinkedList<>();
+            Q2 = new LinkedList<>();
+            dx = new int[]{1, 0, -1, 0};
+            dy = new int[]{0, 1, 0, -1};
+
+            // 배열 초기화
+            for (int i = 0; i < n; i++) {
+                String s = br.readLine();
+                for (int j = 0; j < m; j++) {
+                    board[i][j] = s.charAt(j);
+                    dist1[i][j] = -1;
                     dist2[i][j] = -1;
-                } else {
-                    dist[i][j] = 0;
-                    dist2[i][j] = 0;
+                    if (board[i][j] == 'F') {
+                        Q1.offer(new Pair(i, j));
+                        dist1[i][j] = 0;
+                    }
+                    if (board[i][j] == 'J') {
+                        Q2.offer(new Pair(i, j));
+                        dist2[i][j] = 0;
+                    }
                 }
             }
-        }
-        bfs(row, column, q,dist);
-        bfs2(row,column,q2,dist2);
-        System.out.println("dist2 = " + Arrays.deepToString(dist2));
-        System.out.println("dist = " + Arrays.deepToString(dist));
+            // 불에 대한 BFS
+            while (!Q1.isEmpty()) {
+                Pair cur = Q1.poll();
+                for (int dir = 0; dir < 4; dir++) {
+                    int nx = cur.X + dx[dir];
+                    int ny = cur.Y + dy[dir];
+                    if (nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
+                    if (dist1[nx][ny] >= 0 || board[nx][ny] == '#') continue;
+                    dist1[nx][ny] = dist1[cur.X][cur.Y] + 1;
+                    Q1.offer(new Pair(nx, ny));
+                }
+            }
 
-    }
-    public static int bfs(int row , int column, Queue<Node> q,int[][] dist){
-        int ans = 0;
-        while (!q.isEmpty()){
+            // 지훈이에 대한 BFS
+            while (!Q2.isEmpty()) {
+                Pair cur = Q2.poll();
+                for (int dir = 0; dir < 4; dir++) {
+                    int nx = cur.X + dx[dir];
+                    int ny = cur.Y + dy[dir];
+                    // 범위를 벗어났다는 것은 탈출에 성공했다는 의미
+                    if (nx < 0 || nx >= n || ny < 0 || ny >= m) {
+                        System.out.println(dist2[cur.X][cur.Y] + 1);
+                        return;
+                    }
+                    if (dist2[nx][ny] >= 0 || board[nx][ny] == '#') continue;
+                    // 불의 전파 시간을 조건에 추가
+                    if (dist1[nx][ny] <= dist2[cur.X][cur.Y] + 1) continue;
+                    dist2[nx][ny] = dist2[cur.X][cur.Y] + 1;
+                    Q2.offer(new Pair(nx, ny));
+                }
+            }
 
-            Node node = q.poll();
-            for (int k = 0 ; k < 4 ; k++){
-                int n_x = node.x + dx[k];
-                int n_y = node.y + dy[k];
-                if (n_x < 0 || n_x >= row || n_y < 0 || n_y >= column) continue;
-                if (dist[n_x][n_y] != 0 ) continue;
-                dist[n_x][n_y] = dist[node.x][node.y] +1;
-                q.offer(new Node(n_x,n_y));
-            }
+            System.out.println("IMPOSSIBLE");
         }
-        for (int i = 0 ; i < column; i++){
-            for (int j = 0 ; j < row ; j++){
-                ans = Math.max(ans,dist[i][j]);
-            }
-        }return ans;
-    }
+    public static class Pair{
+        int X;
+        int Y;
 
-    public static void bfs2(int row , int column, Queue<Node> q,int[][] dist){
-        int ans = 0;
-        while (!q.isEmpty()){
-            Node node = q.poll();
-            for (int k = 0 ; k < 4 ; k++) {
-                int n_x = node.x + dx[k];
-                int n_y = node.y + dy[k];
-                if (n_x < 0 || n_x >= row || n_y < 0 || n_y >= column){
-                    System.out.println(dist[node.x][node.y]+1);
-                     return;
-            }
-                if (dist2[n_x][n_y] >= 0 || arr[n_x][n_y] == '#') continue;
-                if (dist[n_x][n_y] != -1 && dist[n_x][n_y] <= dist[node.x][node.y] +1) continue;
-                dist[n_x][n_y] = dist[node.x][node.y] +1;
-                q.offer(new Node(n_x,n_y));
-            }
-        }
-        for (int i = 0 ; i < column; i++){
-            for (int j = 0 ; j < row ; j++){
-                ans = Math.max(ans,dist[i][j]);
-            }
+        public Pair(int x, int y) {
+            X = x;
+            Y = y;
         }
     }
-    public static class Node{
-        int x;
-        int y;
-
-        @Override
-        public String toString() {
-            return "Node{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    '}';
-        }
-
-        public Node(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
     }
-}

@@ -21,6 +21,7 @@ public class dungeons {
         Arrays.sort(dungeons, ((o1, o2) -> {
             return o1[0] - o2[0];
         }));
+
         Queue<int[]> queue2 = new LinkedList<>(Arrays.asList(dungeons));
 
         int tempK = k;

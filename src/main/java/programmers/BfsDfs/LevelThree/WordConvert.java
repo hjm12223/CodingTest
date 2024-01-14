@@ -1,6 +1,5 @@
 package programmers.BfsDfs.LevelThree;
 
-import javax.naming.CannotProceedException;
 import java.util.Arrays;
 
 public class WordConvert {
@@ -13,11 +12,16 @@ public class WordConvert {
     }
     public static int solution(String begin, String target, String[] words) {
         visited = new boolean[words.length];
-        bfs(begin,target,words,0);
+        dfs(begin,target,words,0);
         return answer;
     }
 
-    private static void bfs(String begin, String target, String[] words, int cnt) {
+    /**
+     * 양반향 그래프
+
+     */
+
+    private static void dfs(String begin, String target, String[] words, int cnt) {
         if (begin.equals(target)){
             answer = cnt;
             return;
@@ -36,7 +40,7 @@ public class WordConvert {
             }
             if (k == 1){
                 visited[i] =true;
-                bfs(words[i],target,words,cnt+1);
+                dfs(words[i],target,words,cnt+1);
                 visited[i] = false;
             }
         }

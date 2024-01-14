@@ -14,7 +14,6 @@ public class Camera {
     public static int solution(int[][] routes) {
         Arrays.sort(routes, (i, j) -> i[0] - j[0]);
         Queue<Car> cars = new LinkedList<>();
-
         for (int[] route : routes) {
             Car car = new Car(route[0], route[1]);  // Car 객체를 생성후 해당 start 와 end 를 넣어줌
             cars.offer(car);
@@ -66,4 +65,13 @@ public class Camera {
          * routes에는 차량의 이동 경로가 포함되어 있으며 routes[i][0]에는 i번째 차량이 고속도로에 진입한 지점, routes[i][1]에는 i번째 차량이 고속도로에서 나간 지점이 적혀 있습니다.
          * 차량의 진입/진출 지점에 카메라가 설치되어 있어도 카메라를 만난것으로 간주합니다.
          * 차량의 진입 지점, 진출 지점은 -30,000 이상 30,000 이하입니다.
+         */
+
+
+
+        /**
+         * 구현실수, 시간복잡도, 구현방법, 알고리즘, 테스트케이스, 예외처리 (0,1, 마지막 번호), 예외케이스.. 하드코딩으로 넣어본다
+         * DFS,BFS, DP -> 3차원 DP 가 가장어려웠음
+         *
+         * 최대한 한번에 풀기..
          */

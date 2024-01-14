@@ -20,16 +20,16 @@ public class GatherDict {
         return result;
     }
 
-    public static void permu(String[] dict, int depth, HashMap<String, Integer> hashMap,StringBuilder str) {
-        if (depth == dict.length){
-            return; // 만약 dict.length 와 depth 가 같을 경우 탈출
-        }
-        for (int i = 0 ; i< dict.length ; i++){
-            str.append(dict[i]); // str 을 dict[i]를 append
-            cnt++; // count ++
-            hashMap.put(String.valueOf(str),cnt); // 해당 str의 값과 cnt 를 hashMap에 input
-            permu(dict, depth+1, hashMap,str); // 다시 로테이션
-            str.deleteCharAt(str.length()-1); // 만약 넘어갈 경우 마지막값을 빼줌
+            public static void permu(String[] dict, int depth, HashMap<String, Integer> hashMap,StringBuilder str) {
+                if (depth == dict.length){
+                    return; // 만약 dict.length 와 depth 가 같을 경우 탈출
+                }
+                for (int i = 0 ; i< dict.length ; i++){
+                    str.append(dict[i]); // str 을 dict[i]를 append
+                    cnt++; // count ++
+                    hashMap.put(String.valueOf(str),cnt); // 해당 str의 값과 cnt 를 hashMap에 input
+                    permu(dict, depth+1, hashMap,str); // 다시 로테이션
+                    str.deleteCharAt(str.length()-1); // 만약 넘어갈 경우 마지막값을 빼줌
+      }
     }
-}
 }

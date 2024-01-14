@@ -12,7 +12,9 @@ public class GymSuit {
         System.out.println("solution = " + solution);
     }
     public static int solution(int n, int[] lost, int[] reserve) {
+
         int count = 0;
+
         Arrays.sort(lost);
         Arrays.sort(reserve);
 

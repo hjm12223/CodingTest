@@ -16,7 +16,7 @@ public class Carpet {
             }
         int round = (int) Math.floor(sqrt);
 
-            for (int i = 1 ; i < Integer.MAX_VALUE; i++ ) {
+        for (int i = 1 ; i < Integer.MAX_VALUE; i++ ) {
                 if (i * round == sum) {
                     return new int[]{i, round};
                 }

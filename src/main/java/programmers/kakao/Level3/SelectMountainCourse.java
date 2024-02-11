@@ -4,16 +4,24 @@ import java.util.*;
 
 public class SelectMountainCourse {
     public static void main(String[] args) {
-        int[] solution = solution(6, new int[][]{{1, 2, 3}, {2, 3, 5}, {2, 4, 2}, {2, 5, 4}, {3, 4, 4}, {4, 5, 3}, {4, 6, 1}, {5, 6, 1}}, new int[]{1, 3}, new int[]{5});
-        System.out.println("solution = " + Arrays.toString(solution));
+//        int[] solution = solution(6, new int[][]{{1, 2, 3}, {2, 3, 5}, {2, 4, 2}, {2, 5, 4}, {3, 4, 4}, {4, 5, 3}, {4, 6, 1}, {5, 6, 1}}, new int[]{1, 3}, new int[]{5});
+//        int[] solution = solution(7, new int[][]{{1, 6, 1}, {1, 4, 1}, {6, 7, 1}, {6, 2, 7}, {4, 5, 1}, {5, 2, 1}, {2, 3, 1}}, new int[]{3, 7}, new int[]{1, 5});
+        System.out.println(Arrays.toString(solution(4, new int[][]{{1, 3, 1}, {1, 4, 1}, {4, 2, 1}}, new int[]{1}, new int[]{4,3,2})));
+//        int[] solutionResult = solution(7, new int[][]{{1, 4, 4}, {1, 6, 1}, {1, 7, 3}, {2, 5, 2}, {3, 7, 4}, {5, 6, 6}}, new int[]{2}, new int[]{3, 4});
+//        System.out.println("solutionResult = " + Arrays.toString(solutionResult));
+//        System.out.println("solution = " + Arrays.toString(solution));
 
     }
 
-    /* 양방향 다익스트라 알고리즘 간선은 이동거리 , 노드는 해당 번호의 위치
+    /*
+
+    양방향 다익스트라 알고리즘 간선은 이동거리 , 노드는 해당 번호의 위치
 
     입구를 통해 산봉우리에 도달하고 다시 해당 입구로 돌아오는 로직을 게산할때
 
     각 노드마다의 거리를 최소화한 값중 가는 시간이 최대로 걸리는 시간과 산봉우리의 값을 배열로 리턴해주면 됌.
+
+    한마디로 다익스트라 알고리즘을 사용하여 간선중 가장 큰 값을 정답값으로 설정하면 됌
 
     리턴값은 산봉우리에 도달할때까지의 시간중 가장 긴 시간
 
@@ -26,41 +34,49 @@ public class SelectMountainCourse {
 
     * */
     public static int[] solution(int n, int[][] paths, int[] gates, int[] summits) {
+
         List<List<Node>> graph = new ArrayList<>();
+        boolean[] isMountain = new boolean[n+1];
 
-        boolean[] isMountain = new boolean[n];
-
+        Arrays.sort(summits); // 산봉우리의 최대값이 같을 시 오름차순 기준으로 값을 보냄
         for (int i = 0; i <= n; i++)
             graph.add(new ArrayList<>());
         for (int i = 0; i < paths.length; i++) {
             int from = paths[i][0];
             int to = paths[i][1];
             int value = paths[i][2];
-            graph.get(from).add(new Node(to,value));
+            graph.get(from).add(new Node(to,value)); // 양방향
             graph.get(to).add(new Node(from,value));
         }
         for (int i = 0 ; i < summits.length; i++){
             isMountain[summits[i]] = true;
         }
 
-        int[] dist = new int[n+1];
+        int[] dist = new int[n+1]; // 시작점으로 memorization
         Arrays.fill(dist,Integer.MAX_VALUE);
-        PriorityQueue<Node> q = new PriorityQueue<>();
+        PriorityQueue<Node> q = new PriorityQueue<>(new Comparator<Node>() {
+            @Override
+            public int compare(Node o1, Node o2) {
+                return o1.cost-o2.cost;
+            }
+        });
+
         for (int i = 0 ; i < gates.length; i++){
-            dist[gates[i]] = 0;
-            q.add(new Node(gates[i],0));
+            dist[gates[i]] = 0; // 시작점은 전부 0 으로 선언하여 방문 못하게
+            q.offer(new Node(gates[i],0));
         }
+
 
         while (!q.isEmpty()){
             Node curr = q.poll();
-            if (isMountain[curr.node]) continue;
-            if (dist[curr.node] < curr.node) continue;
+            if (isMountain[curr.node]) continue; // 해당경로가 산봉우리 일 경우 건너뜀
+            if (dist[curr.node] < curr.cost) continue; // 현재 코스트 보다 크다면 건너뜀
             for (int i = 0 ; i < graph.get(curr.node).size(); i++){
                 int nextNode = graph.get(curr.node).get(i).node;
                 int nextCost = Math.max(graph.get(curr.node).get(i).cost, curr.cost);
             if (dist[nextNode] > nextCost){
                 dist[nextNode] = nextCost;
-                q.add(new Node(nextNode,nextCost));
+                q.offer(new Node(nextNode,nextCost));
             }
             }
         }
@@ -76,7 +92,7 @@ public class SelectMountainCourse {
     }
 
 
-    public static class Node implements Comparable<Node> {
+    public static class Node {
         @Override
         public String toString() {
             return "Node{" +
@@ -93,10 +109,6 @@ public class SelectMountainCourse {
             this.cost = cost;
         }
 
-        @Override
-        public int compareTo(Node o) {
-            return this.cost - o.cost;
-        }
     }
 }
 /**

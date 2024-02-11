@@ -34,9 +34,6 @@ public class Permutation {
                 out[depth] = arr[i];
                 permutation(arr, out, isVisited, r, depth + 1);
                 isVisited[i] = false;
-                while (i < arr.length - 1 && arr[i] == arr[i + 1]) {
-                    i++;
-                }
             }
         }
     }

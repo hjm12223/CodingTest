@@ -1,4 +1,4 @@
-package programmers.kakao.Level3;
+package beakjoon.dijkstra;
 
 import java.util.*;
 

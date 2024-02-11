@@ -43,9 +43,11 @@ public class Tomato {
                 int n_x = tot.x + nx[k];
                 int n_y = tot.y + ny[k];
                 if (n_x < 0 || n_x >= row || n_y <0 || n_y >= column) continue;
-                if (dist[n_x][n_y] >= 0 ) continue;
-                q.offer(new Tot(n_x,n_y));
-                dist[n_x][n_y] = dist[tot.x][tot.y] +1;
+                System.out.println("n_x = " + n_x);
+                System.out.println("n_y = " + n_y);
+                if (dist[n_y][n_x] >= 0 ) continue;
+                q.offer(new Tot(n_y,n_x));
+                dist[n_y][n_x] = dist[tot.x][tot.y] +1;
             }
         }
         System.out.println("dist = " + Arrays.deepToString(dist));

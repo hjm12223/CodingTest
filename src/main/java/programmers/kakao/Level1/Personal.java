@@ -9,8 +9,6 @@ public class Personal {
 //        int[] solution = solution("2020.01.01", new String[]{"Z 3", "D 5"}, new String[]{"2019.01.01 D", "2019.11.15 Z", "2019.08.02 D", "2019.07.01 D", "2018.12.28 Z"});
         solution("2009.12.31", new String[]{"A 13"}, new String[]{"2008.11.03 A"});
 //        int[] solution = solution("2023.01.01", new String[]{"A 6"}, new String[]{"2022.07.01 A", "2022.07.01 A", "2022.07.01 A"});
-
-
     }
 
     public static int[] solution(String today, String[] terms, String[] privacies) {

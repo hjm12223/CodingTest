@@ -11,11 +11,79 @@ import java.util.*;
  */
 public class Emoticon {
     public static void main(String[] args) {
-        solution(new int[][]{{40, 10000}, {25, 10000}}, new int[]{7000, 9000});
+//        int[] solution = solution(new int[][]{{40, 10000}, {25, 10000}}, new int[]{7000, 9000});
+        int[] solution = solution(new int[][]{{40, 2900}, {23, 10000}, {11, 5200}, {5, 5900}, {40, 3100}, {27, 9200}, {32, 6900}}, new int[]{1300, 1500, 1600, 4900});
+        System.out.println("solution = " + Arrays.toString(solution));
     }
+    static int cnt = 1;
+    static int[] percent = new int[]{10,20,30,40};
+    static int total_join = 0;
+    static int total_price= 0;
+    static int min = Integer.MAX_VALUE;
 
     public static int[] solution(int[][] users, int[] emoticons) {
-        return new int[] {1};
+        for (int[] user : users) {
+            min = Math.min(min,user[0]);
+        }
+        System.out.println("min = " + min);
+
+        for (int i = 0; i < 4; i++) {
+            if (min <= percent[i]) {
+                min = i; // index
+                break;
+            }
+        }
+
+        // 중복조합 돌리기
+        int[] discounts = new int[emoticons.length];
+        comb(discounts, 0, emoticons.length, users, emoticons);
+        int[] answer = {total_join, total_price}; // 가입 유저 수, 매출액
+        return answer;
+    }
+    private static void comb(int[] discounts, int depth, int r, int[][] users, int[] emoticons) {
+        System.out.println("depth = " + depth);
+        if (depth == r){
+            System.out.println("------");
+            cal(users,emoticons,discounts);
+            return;
+        }
+        for (int i = depth ; i < r ; i++){
+            for (int j = min; j< 4 ; j++){
+                System.out.println("j = " + j);
+                discounts[i] = percent[j];
+                System.out.println("discounts = " + Arrays.toString(discounts));
+                comb(discounts,i+1,r,users,emoticons);
+            }
+        }
+    }
+
+    private static void cal(int[][] users, int[] emoticons, int[] discounts) {
+        int join = 0;
+        int price = 0;
+
+        for (int[] user : users) {
+            int userMinDiscount = user[0];
+            int userMaxPay = user[1];
+            int sum = 0;
+
+            for (int i = 0 ; i< discounts.length; i++){
+                if (discounts[i] < userMinDiscount) continue;
+                sum+= sale(emoticons[i],discounts[i]);
+            }
+
+            if (userMaxPay <= sum) join++;
+            else price += sum;
+        }
+        if (join > total_join){
+            total_join = join;
+            total_price = price;
+        } else if (join == total_join && price> total_price) {
+            total_price= price;
+        }
+    }
+
+    private static int sale(int emoticon, int discount) {
+        return (emoticon / 100) * (100 - discount);
     }
 }
   /*

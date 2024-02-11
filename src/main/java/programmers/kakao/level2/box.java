@@ -40,8 +40,6 @@ public class box {
             // 현재 집에 배달과 수거를 진행 한 후 추가로 배달 수거 할 수 있는 상자의 갯수를 측정
                 nowDelivery -= curr.delivery;
                 nowPickup -= curr.pickup;
-            System.out.println("nowPickup = " + nowPickup);
-            System.out.println("nowDelivery = " + nowDelivery);
                 distance += (long) curr.idx * cnt * 2;
             }
         return distance;

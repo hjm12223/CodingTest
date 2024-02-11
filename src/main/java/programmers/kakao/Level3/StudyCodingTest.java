@@ -35,6 +35,7 @@ public class StudyCodingTest {
             Test test = new Test(problems[i][0],problems[i][1],problems[i][2],problems[i][3],problems[i][4]);
             testList.add(test);
         }
+
         Collections.sort(testList,(o1, o2) -> {
             if (o1.reqAlgo == o2.reqAlgo) return Integer.compare(o1.reqCoding, o2.reqCoding);
             else return Integer.compare(Integer.compare(o1.reqAlgo,o2.reqAlgo),Integer.compare(o1.reqCoding,o2.reqCoding));

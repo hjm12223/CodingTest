@@ -1,40 +1,90 @@
 package programmers.kakao.level2;
 
+import com.sun.source.tree.Tree;
+
+import javax.naming.NameNotFoundException;
 import java.util.*;
 
 public class MenuRenewal {
-    static boolean[] visited;
     public static void main(String[] args) {
         solution(new String[]{"ABCFG", "AC", "CDE", "ACDE", "BCFG", "ACDEH"},new int[]{2,3,4});
     }
     public static String[] solution(String[] orders, int[] course) {
-        String[] answer = {};
-        Arrays.sort(orders,(o1, o2) -> {
-            return o1.length() - o2.length();
+        Map<String, Integer> map = new HashMap<>();
+
+
+        // 모든 주문에 대해 조합을 생성하여 map에 기록
+        for (String order : orders) {
+            for (int courseLength : course) {
+                comb(order, courseLength, 0, new StringBuilder(), map);
+            }
+        }
+        Map<String,Integer> sortedMap = new TreeMap<>(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return Integer.compare(map.get(o2),map.get(o1));
+            }
         });
-        List<String> list=  new ArrayList<>();
-        Map<List<String>,Integer> map = new HashMap<>();
-        for (int i = 0 ; i< orders.length; i++) {
-            visited = new boolean[orders.length];
-            comb(orders,new String[course[i]],course[i], 0);
+
+        sortedMap.putAll(map);
+        // 주문 횟수가 가장 많은 조합을 선택
+        List<String> answerList = new ArrayList<>();
+        for (int courseLength : course) {
+            int maxCount = 0;
+            for (String key : sortedMap.keySet()) {
+                if (key.length() == courseLength && map.get(key) >= 2) {
+                    maxCount = Math.max(maxCount, sortedMap.get(key));
+                }
+            }
+            for (String key : sortedMap.keySet()) {
+                if (key.length() == courseLength && sortedMap.get(key) == maxCount) {
+                    answerList.add(key);
+                }
+            }
         }
 
-        System.out.println("map = " + map);
+        // 오름차순으로 정렬하여 반환
+        Collections.sort(answerList);
+        String[] answer = answerList.toArray(new String[0]);
+        System.out.println(Arrays.toString(answer));
         return answer;
     }
-
-    private static void comb(String[] course, String[] output, int orders, int depth) {
-        if (depth== orders){
-            System.out.println("output = " + Arrays.toString(output));
+    private static void comb(String order, int courseLength, int index, StringBuilder current, Map<String, Integer> map) {
+        if (current.length() == courseLength) {
+            char[] chars = current.toString().toCharArray();
+            Arrays.sort(chars);
+            String key = new String(chars);
+            map.put(key, map.getOrDefault(key, 0) + 1);
             return;
         }
-        for (int i = 0 ; i< course.length; i++){
-            visited[i] = true;
-            output[i] =  course[i];
-            comb(course,output, orders,depth+1);
-            visited[i] = false;
+
+        Set<Character> set = new HashSet<>(); // 중복 문자 확인을 위한 Set
+        for (int i = index; i < order.length(); i++) {
+            char c = order.charAt(i);
+            if (!set.contains(c)) { // 이미 선택한 문자인 경우 건너뜁니다.
+                current.append(c);
+                comb(order, courseLength, i + 1, current, map);
+                current.deleteCharAt(current.length() - 1);
+                set.add(c);
+            }
+        }
+    }
+    private static class Node{
+        String key;
+        Integer value;
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "key='" + key + '\'' +
+                    ", value=" + value +
+                    '}';
         }
 
+        public Node(String key, Integer value) {
+            this.key = key;
+            this.value = value;
+        }
     }
 
 }

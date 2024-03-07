@@ -8,10 +8,6 @@ public class Boj9466 {
     static int[] arr;
     static boolean[] visited, done;
     static int count;
-    /**
-     * 한번에 회전이 돌아야지 팀으로 인정
-     * @param args
-     */
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int tc = sc.nextInt();
@@ -47,15 +43,6 @@ public class Boj9466 {
             }
         }
         done[j]=  true;
-    }
-    public static class Student{
-        int curr;
-        int next;
-
-        public Student(int curr, int next) {
-            this.curr = curr;
-            this.next = next;
-        }
     }
 }
 /**

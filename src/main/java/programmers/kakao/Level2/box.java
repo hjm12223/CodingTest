@@ -1,7 +1,6 @@
-package programmers.kakao.level2;
+package programmers.kakao.Level2;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class box {

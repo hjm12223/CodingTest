@@ -1,6 +1,5 @@
-package programmers.kakao.level2;
+package programmers.kakao.Level2;
 
-import javax.lang.model.SourceVersion;
 import java.util.Arrays;
 
 public class Spin {

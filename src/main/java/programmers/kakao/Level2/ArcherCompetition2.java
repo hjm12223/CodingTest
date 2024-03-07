@@ -1,4 +1,4 @@
-package programmers.kakao.level2;
+package programmers.kakao.Level2;
 import java.util.Arrays;
 
 public class ArcherCompetition2 {

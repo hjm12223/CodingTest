@@ -1,8 +1,5 @@
-package programmers.kakao.level2;
+package programmers.kakao.Level2;
 
-import com.sun.source.tree.Tree;
-
-import javax.naming.NameNotFoundException;
 import java.util.*;
 
 public class MenuRenewal {
@@ -13,7 +10,7 @@ public class MenuRenewal {
         Map<String, Integer> map = new HashMap<>();
 
 
-        // 모든 주문에 대해 조합을 생성하여 map에 기록
+        // 모든 주문에 대해 조합을 생성하여 map에 저장
         for (String order : orders) {
             for (int courseLength : course) {
                 comb(order, courseLength, 0, new StringBuilder(), map);
@@ -27,7 +24,6 @@ public class MenuRenewal {
         });
 
         sortedMap.putAll(map);
-        // 주문 횟수가 가장 많은 조합을 선택
         List<String> answerList = new ArrayList<>();
         for (int courseLength : course) {
             int maxCount = 0;
@@ -43,7 +39,6 @@ public class MenuRenewal {
             }
         }
 
-        // 오름차순으로 정렬하여 반환
         Collections.sort(answerList);
         String[] answer = answerList.toArray(new String[0]);
         System.out.println(Arrays.toString(answer));
@@ -61,7 +56,7 @@ public class MenuRenewal {
         Set<Character> set = new HashSet<>(); // 중복 문자 확인을 위한 Set
         for (int i = index; i < order.length(); i++) {
             char c = order.charAt(i);
-            if (!set.contains(c)) { // 이미 선택한 문자인 경우 건너뜁니다.
+            if (!set.contains(c)) {
                 current.append(c);
                 comb(order, courseLength, i + 1, current, map);
                 current.deleteCharAt(current.length() - 1);

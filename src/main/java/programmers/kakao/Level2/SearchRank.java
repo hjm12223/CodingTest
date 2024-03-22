@@ -56,7 +56,7 @@ public class SearchRank {
             map.put(key,list);
             return;
         }
-        comb(split, depth+1, key+"-", info, map, score);
+        comb(split, depth+1, key + "-", info, map, score);
         comb(split, depth+1, key + split[depth], info, map, score);
     }
 }

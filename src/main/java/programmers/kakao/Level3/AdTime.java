@@ -130,7 +130,7 @@ public class AdTime {
                     '}';
         }
     }
-    private static class Time{
+        private static class Time{
         @Override
         public String toString() {
             return "Time{" +

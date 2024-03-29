@@ -26,6 +26,4 @@ public class CandidateKey {
         }
         return answer;
     }
-    private static void comb(String[] row, int , int r, String key){
-    }
 }

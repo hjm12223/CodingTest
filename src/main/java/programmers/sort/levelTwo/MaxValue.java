@@ -10,27 +10,23 @@ public class MaxValue {
     }
 
     public static String solution(int[] numbers) {
-        String[] str = new String[numbers.length];
-        for (int i = 0; i < numbers.length; i++) {
-            str[i] = String.valueOf(numbers[i]);
+        StringBuilder str = new StringBuilder();
+        String[] line = new String[numbers.length];
+
+        for (int i = 0 ; i< numbers.length ; i++){
+            line[i] = String.valueOf(numbers[i]);
         }
-        Arrays.sort(str, (o1, o2) -> (o2 + o1).compareTo(o1 + o2));
-        StringBuilder stringBuilder = new StringBuilder();
-        if (str[0].equals("0")){
+
+        Arrays.sort(line, (o1, o2) ->
+            (o2 + o1).compareTo(o1 + o2)
+        );
+        if (line[0].equals("0")){
             return "0";
         }
-        for (String s : str) {
-            stringBuilder.append(s);
+        for (String s : line) {
+            str.append(s);
         }
-        return stringBuilder.toString();
+        return str.toString();
     }
-}
-/**
- * 무한반복문을 선언
- *
- * 해시맵으로 우선순위를 준다?
- *
- * number 의 값들을 빼오면서 해당 값이 다른 값들보다 작다 그럼 다른값들
- *
- */
 
+}

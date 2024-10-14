@@ -1,103 +1,101 @@
 package beakjoon.dijkstra;
 
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Boj17835 {
-    static int n;
-    static List<List<Node>> list = new ArrayList<>();
+	static Long[] dist;
+	static List<List<Node>> list;
 
-    public static void main(String[] args) {
-        Scanner sc  = new Scanner(System.in);
-        n = sc.nextInt(); // 노드의 수
-        int m = sc.nextInt(); // 간선의 수
-        int k = sc.nextInt(); // 면접장의 수
-        int[][] arr =new int[m][3];
-        for (int i = 0; i< m ; i++){
-            arr[i][0] = sc.nextInt();
-            arr[i][1]= sc.nextInt();
-            arr[i][2]= sc.nextInt();
-        }
-        for (int i = 0 ; i<= n ; i++)
-            list.add(new ArrayList<>());
+	static Queue<Node> pq;
 
-        for (int i = 0; i < m ; i++){
-            int from = arr[i][0];
-            int to = arr[i][1];
-            int cost = arr[i][2];
-            list.get(from).add(new Node(to,cost));
-        }
-        List<Integer> city = new ArrayList<>();
-        sc.nextLine();
-        String[] strings = sc.nextLine().split(" ");
-        for (int i = 0; i< strings.length; i++){
-            city.add(Integer.parseInt(strings[i]));
-        }
-        System.out.println("city = " + city);
-        for (int i = 0 ; i< city.size(); i++){
-            int place = city.get(i);
-            for (int j = 1 ; j<= n ; j++){
-                if (city.contains(j)) continue;
-                System.out.println("j = " + j);
-                System.out.println("place = " + place);
-                int dijkstra = dijkstra(j, place);
-                System.out.println("dijkstra = " + dijkstra);
-                System.out.println();
-            }
-        }
-    }
+	static int index = 0;
+	static long value = 0;
 
-    private static int dijkstra(int start, int end) {
-        Queue<Node> pq = new PriorityQueue<>();
-        pq.offer(new Node(start,0));
-        int[] dist = new int[n+1];
-        Arrays.fill(dist,Integer.MAX_VALUE);
-        dist[start] = dist[0] = 0;
-        while (!pq.isEmpty()){
-            Node curr = pq.poll();
-            if (dist[curr.n] < curr.c) continue;
-            for (int i = 0; i< list.get(curr.n).size() ; i++){
-                int nextC = list.get(curr.n).get(i).c + curr.c;
-                int nextN = list.get(curr.n).get(i).n;
-                if (dist[nextN] > nextC){
-                    dist[nextN] = nextC;
-                    pq.offer(new Node(nextN,nextC));
-                }
-            }
-        }
-        return dist[end];
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
 
-    }
+		int V = Integer.parseInt(st.nextToken()); // 도시의 수
+		int E = Integer.parseInt(st.nextToken()); // 도시간 간선의 수
+		int K = Integer.parseInt(st.nextToken()); // 면접장의 수
 
-    private static class Node implements Comparable<Node>{
-        public Node(int n, int c) {
-            this.n = n;
-            this.c = c;
-        }
+		list = new ArrayList<>(); // 인접리스트 구현
 
-        int n;
+		for (int i = 0; i <= V; i++)
+			list.add(new ArrayList<>());
 
-        int c;
-        @Override
-        public int compareTo(Node o){
-            return this.c - o.c;
-        }
-    }
-    /**
-     * 마포구에는 모든 대학생이 입사를 희망하는 굴지의 대기업 ㈜승범이네 본사가 자리를 잡고 있다.
-     * 승범이는 ㈜승범이네의 사장인데, 일을 못 하는 직원들에게 화가 난 나머지 전 직원을 해고하고 신입사원을 뽑으려 한다.
-     * 1차 서류전형이 끝난 뒤 합격자들은 면접을 준비하게 되었다.
-     *
-     * 면접자들은 서로 다른 N개의 도시에 거주한다.
-     * 승범이는 면접자들의 편의를 위해 거주 중인 N개 도시 중 K개의 도시에 면접장을 배치했다.
-     * 도시끼리는 단방향 도로로 연결되며, 거리는 서로 다를 수 있다.
-     * 어떤 두 도시 사이에는 도로가 없을 수도, 여러 개가 있을 수도 있다.
-     * 또한 어떤 도시에서든 적어도 하나의 면접장까지 갈 수 있는 경로가 항상 존재한다.
-     *
-     * 모든 면접자는 본인의 도시에서 출발하여 가장 가까운 면접장으로 찾아갈 예정이다. 즉,
-     * 아래에서 언급되는 '면접장까지의 거리'란 그 도시에서 도달 가능한 가장 가까운 면접장까지의 최단 거리를 뜻한다.
-     *
-     * 속초 출신 승범이는 지방의 서러움을 알기에 각 도시에서 면접장까지의 거리 중, 그 거리가 가장 먼 도시에서 오는 면접자에게 교통비를 주려고 한다.
-     *
-     * 승범이를 위해 면접장까지의 거리가 가장 먼 도시와 그 거리를 구해보도록 하자.
-     */
+		for (int i = 0; i < E; i++) {
+			st = new StringTokenizer(br.readLine());
+			int from = Integer.parseInt(st.nextToken());
+			int to = Integer.parseInt(st.nextToken());
+			int cost = Integer.parseInt(st.nextToken());
+			list.get(to).add(new Node(from, cost)); // 역방향 간선으로 추가
+		}
+		st = new StringTokenizer(br.readLine());
+		pq = new PriorityQueue<>();
+
+		dist = new Long[V + 1];
+		Arrays.fill(dist, Long.MAX_VALUE);
+
+		for (int i = 0; i < K; i++) {
+			int place = Integer.parseInt(st.nextToken());
+			dist[place] = 0L;
+			pq.offer(new Node(place, 0)); // 모든 면접장을 큐에 넣음
+		}
+
+		dijkstra(); // 다익스트라 한 번만 호출
+
+		System.out.println(index);
+		System.out.println(value);
+	}
+
+	public static void dijkstra() {
+		while (!pq.isEmpty()) {
+			Node curr = pq.poll();
+			if (dist[curr.index] < curr.cost) continue;
+
+			for (Node next : list.get(curr.index)) {
+				long nextCost = curr.cost + next.cost;
+				if (dist[next.index] > nextCost) {
+					dist[next.index] = nextCost;
+					pq.offer(new Node(next.index, nextCost));
+				}
+			}
+		}
+
+		// 최댓값 및 해당 도시 인덱스 계산
+		for (int i = 1; i < dist.length; i++) {
+			if (dist[i] > value && dist[i] != Integer.MAX_VALUE) {
+				value = dist[i];
+				index = i;
+			} else if (dist[i] == value) {
+				if (i < index) {
+					index = i;
+				}
+			}
+		}
+	}
+
+	public static class Node implements Comparable<Node> {
+		int index;
+		long cost;
+
+		public Node(int index, long cost) {
+			this.index = index;
+			this.cost = cost;
+		}
+
+		@Override
+		public int compareTo(Node o1) {
+			return Long.compare(this.cost, o1.cost);
+		}
+	}
 }

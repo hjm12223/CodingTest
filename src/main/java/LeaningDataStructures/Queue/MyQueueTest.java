@@ -1,9 +1,12 @@
 package LeaningDataStructures.Queue;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 public class MyQueueTest {
 	public static void main(String[] args) {
 		MyArrayQueue<Student> q = new MyArrayQueue<>();
-
+		Deque<Integer> deque = new ArrayDeque<>();
 		q.offer(new Student("김자바", 92));
 		q.offer(new Student("이시플", 72));
 		q.offer(new Student("조시샵", 98));

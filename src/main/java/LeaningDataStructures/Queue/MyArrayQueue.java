@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.Queue;
 
 public class MyArrayQueue<E> implements Queue<E> {
-
+	
 	private static final int DEFAULT_CAPACITY = 64;
 
 	private Object[] array; // 요소를 저장할 배열

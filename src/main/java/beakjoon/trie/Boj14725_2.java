@@ -12,58 +12,60 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-public class Boj14725 {
+public class Boj14725_2 {
 	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
 		StringTokenizer st = new StringTokenizer(br.readLine());
+
 		int T = Integer.parseInt(st.nextToken());
 		Trie trie = new Trie();
-		for (int k = 0; k < T; k++) {
+		for (int i = 0; i < T; i++) {
 			st = new StringTokenizer(br.readLine());
-			int n = Integer.parseInt(st.nextToken());
 
-			String[] foods = new String[n];
-			for (int i = 0; i < n; i++) {
-				foods[i] = st.nextToken();
+			int k = Integer.parseInt(st.nextToken());
+			String[] foods = new String[k];
+			for (int j = 0; j < foods.length; j++) {
+				foods[j] = st.nextToken();
 			}
 			trie.insert(foods);
+
 		}
 		trie.print();
-		bw.close();
+		bw.flush();
 	}
 
-	private static class Trie {
+	public static class Trie {
 		Node rootNode;
 
 		public Trie() {
 			rootNode = new Node();
 		}
 
-		void print() throws IOException {
-			printNode(rootNode, 0);
-		}
-
-		void printNode(Node node, int depth) throws IOException {
-			List<String> list = new ArrayList<>(node.childNode.keySet());
-			Collections.sort(list);
-			for (String food : list) {
-				bw.write("--".repeat(depth) + food + "\n");
-				printNode(node.childNode.getOrDefault(food, null), depth + 1);
-			}
-			bw.flush();
-		}
-
-		void insert(String[] foods) {
+		public void insert(String[] foods) {
 			Node node = rootNode;
 			for (String food : foods) {
 				node = node.childNode.computeIfAbsent(food, key -> new Node());
 			}
 		}
+
+		public void print() throws IOException {
+			printResult(rootNode, 0);
+		}
+
+		private void printResult(Node node, int depth) throws IOException {
+			List<String> list = new ArrayList<>(node.childNode.keySet());
+			Collections.sort(list);
+			for (String food : list) {
+				bw.write("--".repeat(depth) + food + "\n");
+				printResult(node.childNode.getOrDefault(food, null), depth + 1);
+			}
+		}
 	}
 
-	private static class Node {
+	public static class Node {
 		Map<String, Node> childNode = new HashMap<>();
 	}
 }

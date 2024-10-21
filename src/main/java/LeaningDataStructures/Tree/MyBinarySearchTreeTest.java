@@ -15,15 +15,16 @@ public class MyBinarySearchTreeTest {
 		tree.add(55);
 		tree.add(61);
 
-		System.out.println("preOrder");
+		System.out.println("전위");
 		tree.preOrder();
 		System.out.println();
 
-		System.out.println("inOrder");
+		System.out.println("중위");
 		tree.inOrder();
 		System.out.println();
 
-		System.out.println("postOrder");
+		System.out.println(Integer.toString(1024, 2));
+		System.out.println("후위");
 		tree.postOrder();
 		System.out.println();
 

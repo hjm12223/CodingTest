@@ -1,57 +1,54 @@
 package Algorithm;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class KruskalAlgorithm {
-    public static void main(String[] args) {
-        int[][] graph = {{1, 2, 6}, {1, 3, 3}, {1, 4, 1}, {2, 5, 4}, {3, 4, 2}, {3, 5, 5}, {4, 5, 7}};
-        int[] parent = new int[6];
-        int total = 0;
+	public static void main(String[] args) {
+		int[][] graph = {{1, 2, 6}, {1, 3, 3}, {1, 4, 1}, {2, 5, 4}, {3, 4, 2}, {3, 5, 5}, {4, 5, 7}};
+		int[] parent = new int[6];
+		int total = 0;
 
-        Arrays.sort(graph,(o1, o2) ->
-                Integer.compare(o1[2] ,o2[2]));
+		Arrays.sort(graph, (o1, o2) ->
+			Integer.compare(o1[2], o2[2]));
 
-        System.out.println("graph = " + Arrays.deepToString(graph));
+		for (int i = 0; i < parent.length; i++) {
+			parent[i] = i;
+		}
+		for (int i = 0; i < graph.length; i++) {
+			int a = graph[i][0];
+			int b = graph[i][1];
+			System.out.println("parent = " + Arrays.toString(parent));
+			if (find(parent, a) != find(parent, b)) {
+				union(parent, a, b);
+				total += graph[i][2];
+			}
+		}
+		System.out.println("total = " + total);
+	}
 
-        for (int i = 0; i < parent.length; i++){
-            parent[i] = i;
-        }
-        for (int i = 0 ; i < graph.length ; i++){
-            int a = graph[i][0];
-            int b = graph[i][1];
-            System.out.println("parent = " + Arrays.toString(parent));
-            if (find(parent, a) != find(parent,b) ){
-                union(parent,a,b);
-                total+=graph[i][2];
-            }
-        }
-        System.out.println("total = " + total);
-    }
+	public static void union(int[] parent, int a, int b) {
+		int a_parent = find(parent, a);
+		System.out.println("a = " + a);
+		System.out.println("a_parent = " + a_parent);
+		int b_parent = find(parent, b);
+		System.out.println("b = " + b);
+		System.out.println("b_parent = " + b_parent);
+		if (parent[a_parent] < parent[b_parent]) {
+			System.out.println("1. parent = " + parent[a_parent]);
+			System.out.println("2. parent = " + parent[b_parent]);
+			parent[b_parent] = parent[a_parent];
+		} else {
+			parent[a_parent] = parent[b_parent];
+		}
+	}
 
-    public static void union(int[] parent, int a, int b){
-        int a_parent = find(parent,a);
-        System.out.println("a = " + a);
-        System.out.println("a_parent = " + a_parent);
-        int b_parent = find(parent,b);
-        System.out.println("b = " + b);
-        System.out.println("b_parent = " + b_parent);
-        if (parent[a_parent] < parent[b_parent]){
-            System.out.println("1. parent = " + parent[a_parent]);
-            System.out.println("2. parent = " + parent[b_parent]);
-            parent[b_parent] = parent[a_parent];
-        }else {
-            parent[a_parent] = parent[b_parent];
-        }
-    }
-
-    public static int find(int[] parent , int i ){
-        if (parent[i] != i){
-            parent[i] = find(parent,parent[i]);
-        }
-        System.out.println("parent = " + parent[i]);
-    return parent[i];
-    }
+	public static int find(int[] parent, int i) {
+		if (parent[i] != i) {
+			parent[i] = find(parent, parent[i]);
+		}
+		System.out.println("parent = " + parent[i]);
+		return parent[i];
+	}
 }
 /**
  *  크루스칼 알고리즘이란

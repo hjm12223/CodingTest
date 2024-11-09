@@ -4,73 +4,107 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 public class Boj14891 {
-    static int[][] arr;
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        arr = new int[4][8];
-        for (int i = 0  ; i< 4 ; i++){
-            String line = br.readLine();
-            for (int j = 0 ; j < 8 ; j++){
-                arr[i][j] = Integer.parseInt(String.valueOf(line.charAt(j)));
-            }
-        }
+	static int[][] gears;
 
-        int k = Integer.parseInt(br.readLine());
-        for (int i = 0 ; i< k ; i++){
-            String[] command = br.readLine().split(" ");
-            int number = Integer.parseInt(String.valueOf(command[0]))-1;
-            int direction= Integer.parseInt(String.valueOf(command[1]));
-            nextSpin(number, direction);
-            preSpin(number,direction);
-        }
-       int result = (arr[0][0]) + (arr[1][0] * 2 ) +(arr[2][0] * 4 ) +(arr[3][0] * 8 );
-        System.out.println(result);
-    }
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		gears = new int[5][8];
+		for (int i = 1; i < 5; i++) {
+			gears[i] = Arrays.stream(br.readLine().split("")).mapToInt(Integer::parseInt).toArray();
+		}
 
-    private static void preSpin(int number, int direction) {
-        int preGear = number - 1;
-        if (preGear >= 0 && arr[preGear][2] != arr[number][6]) {
-            preSpin(preGear, direction * -1);
-            rotate(preGear, direction * -1);
-        }
-    }
+		int n = Integer.parseInt(br.readLine()); // 회전 횟수
+		for (int k = 0; k < n; k++) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			Map<Integer, Evidence> possible = new HashMap<>();
+			int index = Integer.parseInt(st.nextToken()); // 돌릴 톱니바퀴 번호
+			int forward = Integer.parseInt(st.nextToken()); // 회전 방향 (1 = 시계, -1 = 반시계)
 
-    /*
-   먼저 해당 톱니바퀴 양쪽에 있는 (3,7) 부분이 맞닿은 톱니바퀴가 돌아가는지의 여부를 확인
-   만약 돌아가지 극이 같아 돌아가지 않는다면 해당 톱니바퀴는 continue;
-   만약 돌아간다면 해당 number 의 저장된 톱니바퀴 배열을 direction 방향으로 회전시킨 후
-    */
-    private static void nextSpin(int number, int direction){
-        int nextGear = number + 1;
-        if (nextGear < 4 && arr[nextGear][6] != arr[number][2]) {
-            nextSpin(nextGear, direction * -1);
-            rotate(nextGear, direction * -1);
-        }
-    }
+			possible.put(index, new Evidence(true, forward)); // 현재 톱니바퀴 회전 설정
+			checkPossible(index, possible); // 회전 가능한 톱니 확인
 
+			for (int i = 1; i <= 4; i++) {
+				Evidence evidence = possible.get(i);
+				if (evidence != null && evidence.isRotate) {
+					if (evidence.forward == 1) {
+						gears[i] = Rrotate(gears[i]);
+					} else if (evidence.forward == -1) {
+						gears[i] = Lrotate(gears[i]);
+					}
+				}
+			}
+		}
+		cal(gears);
+	}
 
-    private static void rotate(int gearIndex, int direction) {
-        if (direction == 1) {
-            int temp = arr[gearIndex][7];
-            System.arraycopy(arr[gearIndex], 0, arr[gearIndex], 1, 7);
-            arr[gearIndex][0] = temp;
-        } else {
-            int temp = arr[gearIndex][0];
-            System.arraycopy(arr[gearIndex], 1, arr[gearIndex], 0, 7);
-            arr[gearIndex][7] = temp;
-        }
-    }
+	private static void cal(int[][] gears) {
+		int x = 1;
+		int result = 0;
+		for (int i = 1; i <= 4; i++) {
+			result += gears[i][0] * x;
+			x *= 2;
+		}
+		System.out.println(result);
+	}
+
+	private static void checkPossible(int index, Map<Integer, Evidence> possible) {
+		// 인덱스 기준 오른쪽
+		for (int i = index; i < 4; i++) {
+			if (gears[i][2] != gears[i + 1][6] && possible.get(i).isRotate) {
+				possible.put(i + 1, new Evidence(true, -possible.get(i).forward));
+			} else {
+				break;
+			}
+		}
+
+		// 인덱스 기준 왼쪽
+		for (int i = index; i > 1; i--) {
+			if (gears[i][6] != gears[i - 1][2] && possible.get(i).isRotate) {
+				possible.put(i - 1, new Evidence(true, -possible.get(i).forward));
+			} else {
+				break;
+			}
+		}
+	}
+
+	// 시계
+	private static int[] Rrotate(int[] gear) {
+		int value = gear[7];
+		int[] tempArr = new int[gear.length];
+		System.arraycopy(gear, 0, tempArr, 1, gear.length - 1);
+		tempArr[0] = value;
+		return tempArr;
+	}
+
+	// 반시계
+	private static int[] Lrotate(int[] gear) {
+		int firstValue = gear[0];
+		int[] tempArr = new int[gear.length];
+		System.arraycopy(gear, 1, tempArr, 0, gear.length - 1);
+		tempArr[gear.length - 1] = firstValue;
+		return tempArr;
+	}
+
+	public static class Evidence {
+		boolean isRotate;
+		int forward;
+
+		public Evidence(boolean isRotate, int forward) {
+			this.isRotate = isRotate;
+			this.forward = forward;
+		}
+
+		@Override
+		public String toString() {
+			return "Evidence{" +
+				"isRotate=" + isRotate +
+				", forward=" + forward +
+				'}';
+		}
+	}
 }
-/*
-N극은 0 S극은 1
-
-3번쨰와 7번쨰 숫자를 기준으로 시계 반시계방향으로 돌리면 된다.
-
-첫번째 정수는 회전시킨 톱니바퀴의 번호, 두번째는 방향 1 은 시계 -1은 반시계
-10101111
-01111101
-11001110
-00000010
- */

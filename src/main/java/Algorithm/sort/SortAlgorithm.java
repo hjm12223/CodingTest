@@ -7,34 +7,34 @@ public class SortAlgorithm {
 		int[] arr = new int[] {8, 74, 24, 41, 23, 754, 123, 32, 1, 45};
 		// bubble(arr);
 		// selection(arr);
-		insertion(arr);
-		quickSort(arr, 0, arr.length - 1);
+		// insertion(arr);
+		// quickSort(arr, 0, arr.length - 1);
+		duallyPivotQuickSort(arr, 0, arr.length - 1);
+
 	}
 
 	public static void bubble(int[] arr) {
-		for (int i = 0; i < arr.length - 1; i++) {
-			boolean change = false;
-			for (int j = 0; j < arr.length - i - 1; j++) {
-				System.out.println("arr = " + Arrays.toString(arr));
-				if (arr[j] > arr[j + 1]) {
-					change = true;
-					int temp = arr[j];
-					arr[j] = arr[j + 1];
-					arr[j + 1] = temp;
+		for (int i = 0; i < arr.length; i++) {
+			int temp = 0;
+			for (int j = arr.length - 1; j > 0; j--) {
+				if (arr[i] > arr[j]) {
+					temp = arr[j];
+					arr[j] = arr[i];
+					arr[i] = temp;
 				}
 			}
-			if (!change) break;
 		}
+		System.out.println("arr = " + Arrays.toString(arr));
 	}
 
 	public static void selection(int[] arr) {
-		for (int i = 0; i < arr.length - 1; i++) {
-			int minIndex = i;
-			for (int j = i + 1; j < arr.length; j++) {
-				if (arr[j] < arr[minIndex]) minIndex = j;
+		for (int i = arr.length - 1; i > 0; i--) {
+			int maxIndex = i;
+			for (int j = i - 1; j > 0; j--) {
+				if (arr[j] > arr[maxIndex]) maxIndex = j;
 			}
-			int temp = arr[minIndex];
-			arr[minIndex] = arr[i];
+			int temp = arr[maxIndex];
+			arr[maxIndex] = arr[i];
 			arr[i] = temp;
 			System.out.println("arr = " + Arrays.toString(arr));
 		}
@@ -52,6 +52,8 @@ public class SortAlgorithm {
 			arr[j + 1] = key;
 
 		}
+		System.out.println("arr = " + Arrays.toString(arr));
+
 	}
 
 	public static void quickSort(int[] arr, int left, int right) {
@@ -63,6 +65,75 @@ public class SortAlgorithm {
 			quickSort(arr, left, pivotIndex - 1);
 			quickSort(arr, pivotIndex + 1, right);
 		}
+	}
+
+	public static void duallyPivotQuickSort(int[] arr, int low, int high) {
+		if (low < high) {
+			int[] pivots = doublePartition(arr, low, high);
+			int lp = pivots[0];  // 작은 피벗의 위치
+			int rp = pivots[1];  // 큰 피벗의 위치
+
+			// 피벗을 기준으로 왼쪽, 중간, 오른쪽 영역에 대해 재귀적으로 정렬
+			duallyPivotQuickSort(arr, low, lp - 1);
+			duallyPivotQuickSort(arr, lp + 1, rp - 1);
+			duallyPivotQuickSort(arr, rp + 1, high);
+			System.out.println("arr = " + Arrays.toString(arr));
+
+		}
+	}
+
+	private static int[] doublePartition(int[] arr, int low, int high) {
+		// 두 개의 피봇 선택
+		if (arr[low] > arr[high]) {
+			int temp = arr[low];
+			arr[low] = arr[high];
+			arr[high] = temp;
+		}
+		int p1 = arr[low];
+		int p2 = arr[high];
+
+		int i = low + 1; // 시작점
+		int j = high - 1; // 끝점
+		int k = low + 1;
+
+		while (k <= j) {
+			if (arr[k] < p1) {
+				int temp = arr[i];
+				arr[i] = arr[k];
+				arr[k] = temp;
+				i++;
+				// arr[k] 가 작은 피봇 p1 보다 작다면 왼쪽에 위치시킨다
+			} else if (arr[k] >= p2) {
+				// arr[k]가 큰 피벗 p2보다 크면, 오른쪽에 위치시킨다.
+				while (arr[j] > p2 && k < j) {
+					j--;
+				}
+				int temp = arr[k];
+				arr[k] = arr[j];
+				arr[j] = temp;
+				j--;
+				if (arr[k] < p1) {
+					int temp2 = arr[i];
+					arr[i] = arr[k];
+					arr[k] = temp2;
+					i++;
+				}
+			}
+			k++;
+		}
+
+		// 피벗을 적절한 위치로 이동
+		i--;
+		j++;
+		int temp = arr[low];
+		arr[low] = arr[i];
+		arr[i] = temp;
+
+		temp = arr[high];
+		arr[high] = arr[j];
+		arr[j] = temp;
+
+		return new int[] {i, j};  // 피벗들의 새로운 위치 반환
 	}
 
 	public static int partition(int[] arr, int left, int right) {

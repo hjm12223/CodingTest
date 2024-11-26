@@ -26,38 +26,38 @@ public class Boj15686 {
 				if (value == 2) chickens.add(new int[] {i, j}); // 치킨집
 			}
 		}
-		List<List<int[]>> comb = getComb(chickens, M);
-		int result = Integer.MAX_VALUE;
-		for (List<int[]> combs : comb) {
-			int cityHomeDis = 0;
+		List<List<int[]>> result = getComb(chickens, M);
+		int value = Integer.MAX_VALUE;
+		for (List<int[]> chk : result) {
+			int minDis = 0;
 			for (int[] home : homes) {
-				int minHomeDis = Integer.MAX_VALUE;
-				for (int[] com : combs) {
-					int dis = Math.min(Math.abs(com[0] - home[0]) + Math.abs(com[1] - home[1]), minHomeDis);
-					minHomeDis = Math.min(dis, minHomeDis);
+				int homeMinDis = Integer.MAX_VALUE;
+				for (int[] ckc : chk) {
+					int res = Math.abs(ckc[0] - home[0]) + Math.abs(ckc[1] - home[1]);
+					homeMinDis = Math.min(homeMinDis, res);
 				}
-				cityHomeDis += minHomeDis;
+				minDis += homeMinDis;
 			}
-			result = Math.min(result, cityHomeDis);
+			value = Math.min(value, minDis);
 		}
-		System.out.println(result);
+		System.out.println(value);
 	}
 
 	private static List<List<int[]>> getComb(List<int[]> chickens, int m) {
-		List<List<int[]>> result = new ArrayList<>();
-		runComb(result, chickens, m, 0, new ArrayList<>());
-		return result;
+		List<List<int[]>> res = new ArrayList<>();
+		runComb(res, chickens, m, 0, new ArrayList<>());
+		return res;
 	}
 
-	private static void runComb(List<List<int[]>> result, List<int[]> chickens, int m, int start, List<int[]> temp) {
-		if (temp.size() == m) {
-			result.add(new ArrayList<>(temp));
+	private static void runComb(List<List<int[]>> res, List<int[]> chickens, int m, int start, ArrayList<int[]> list) {
+		if (list.size() == m) {
+			res.add(new ArrayList<>(list));
 			return;
 		}
 		for (int i = start; i < chickens.size(); i++) {
-			temp.add(chickens.get(i));
-			runComb(result, chickens, m, start + 1, temp);
-			temp.remove(temp.size() - 1);
+			list.add(chickens.get(i));
+			runComb(res, chickens, m, i + 1, list);
+			list.remove(list.size() - 1);
 		}
 	}
 }

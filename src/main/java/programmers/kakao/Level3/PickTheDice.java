@@ -1,45 +1,143 @@
 package programmers.kakao.Level3;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class PickTheDice {
-    // 6^4 총 1296 의 경우의 수를 보아 제일 이길 확률이 큰 다이스 조합을 리턴해주면 된다
-    public static void main(String[] args) {
-        int[] solution = solution(new int[][]{{1, 2, 3, 4, 5, 6}, {3, 3, 3, 3, 4, 4}, {1, 3, 3, 4, 4, 4}, {1, 1, 4, 4, 5, 5}});
-            System.out.println("Arrays.toString(ints) = " + Arrays.toString(solution));
-    }
-    public static int[] solution(int[][] dice) {
-        int n = dice.length;
-        int maxWin = 0;
-        Map<Integer,Integer> answer = new HashMap<>();
-        for (int i = 0; i< n ; i++){
-            int win = 0;
-            for (int j = 0; j< n ; j++) {
-                if (i==j) continue;;
-                int currentWin = 0;
-                for (int num_i :dice[i]){
-                    for (int num_j : dice[j]){
-                        if (num_i > num_j){
-                            currentWin++;
-                        }
-                    }
-                }
-                win += currentWin;
-            }
-            if (win > maxWin){
-                answer.put(i+1,win);
-                maxWin= win;
-            } else if (maxWin == win) {
-                answer.put(i+1,win);
-            }
-        }
-        System.out.println("answer = " + answer);
+	static int N;
 
-         for (int i = 0 ; i < n/2 ; i++){
+	public static void main(String[] args) {
+		System.out.println(Arrays.toString(solution(new int[][]
+			{{1, 2, 3, 4, 5, 6}, {3, 3, 3, 3, 4, 4}, {1, 3, 3, 4, 4, 4}, {1, 1, 4, 4, 5, 5}}
+		)));
+		int[] solution = solution(
+			new int[][] {
+				{1, 2, 3, 4, 5, 6}, {3, 3, 3, 3, 4, 4}, {1, 3, 3, 4, 4, 4}, {1, 1, 4, 4, 5, 5}
+				, {1, 1, 1, 1, 1, 1}, {2, 2, 2, 2, 2, 2}, {3, 3, 3, 4, 4, 4}, {5, 1, 4, 4, 5, 5}
+				, {6, 6, 6, 6, 6, 6}, {5, 30, 20, 1, 24, 25}
+			}
+		);
+		System.out.println("solution = " + Arrays.toString(solution));
+	}
 
-         }
-        return new int[]{1};
-        }
+	public static int[] solution(int[][] dice) {
+		N = dice.length;
+		List<List<Integer>> comb = new ArrayList<>();
+		getComb(comb, new ArrayList<>(255), N / 2, 0);
+		List<Result> results = new ArrayList<>();
+		Set<List<Integer>> check = new HashSet<>();
+		for (int k = 0; k < comb.size() / 2; k++) {
+			List<Integer> comb1 = comb.get(k);
+			List<Integer> comb2 = new ArrayList<>();
+			for (int i = 0; i < N; i++) {
+				if (!comb1.contains(i + 1)) comb2.add(i + 1);
+			}
+			if (check.contains(comb1) && check.contains(comb2)) continue;
+			check.add(comb1);
+			check.add(comb2);
+
+			Dice dice1 = runDice(comb1, dice);
+			Dice dice2 = runDice(comb2, dice);
+
+			Result result1 = new Result(dice1.index);
+			Result result2 = new Result(dice2.index);
+
+			find(result1, result2, dice1, dice2);
+
+			results.add(result1);
+			results.add(result2);
+		}
+		results.sort((o1, o2) -> {
+				if (o2.win == o1.win) {
+					return o2.draw - o1.draw;
+				} else {
+					return o2.win - o1.win;
+				}
+			}
+		);
+		return results.get(0).index.stream().mapToInt(Integer::valueOf).toArray();
+
+	}
+
+	private static Dice runDice(List<Integer> comb, int[][] dices) {
+		Dice dice = new Dice();
+		dice.index.addAll(comb);
+		recur(dice, comb, dices, 0, 0);
+		return dice;
+	}
+
+	private static void recur(Dice dice, List<Integer> comb, int[][] dices, int depth, int currentSum) {
+		if (depth == comb.size()) {
+			dice.comb.add(currentSum);
+			return;
+		}
+
+		int currentDiceIndex = comb.get(depth) - 1;
+
+		for (int i = 0; i < 6; i++) {
+			recur(dice, comb, dices, depth + 1,
+				currentSum + dices[currentDiceIndex][i]);
+		}
+	}
+
+	private static void getComb(List<List<Integer>> comb, List<Integer> output, int r, int depth) {
+		if (output.size() == r) {
+			comb.add(new ArrayList<>(output));
+			return;
+		}
+		for (int i = depth; i < N; i++) {
+			output.add(i + 1);
+			getComb(comb, output, r, i + 1);
+			output.remove(output.size() - 1);
+		}
+	}
+
+	private static void find(Result result1, Result result2, Dice dice1, Dice dice2) {
+		for (int firstDice : dice1.comb) {
+			for (int secondDice : dice2.comb) {
+				if (firstDice > secondDice) {
+					result1.win++;
+					result2.lose++;
+				} else if (firstDice == secondDice) {
+					result1.draw++;
+					result2.draw++;
+				} else {
+					result1.lose++;
+					result2.win++;
+				}
+			}
+		}
+	}
+
+	private static class Result {
+		Set<Integer> index;
+		int win = 0;
+		int draw = 0;
+		int lose = 0;
+
+		public Result(Set<Integer> index) {
+			this.index = index;
+		}
+
+		@Override
+		public String toString() {
+			return "Result{" +
+				"index=" + index +
+				", win=" + win +
+				", draw=" + draw +
+				", lose=" + lose +
+				'}';
+		}
+	}
+
+	private static class Dice {
+		Set<Integer> index = new HashSet<>();
+		List<Integer> comb = new ArrayList<>(255);
+
+	}
 }
 /**
  * A와 B가 n개의 주사위를 가지고 승부를 합니다. 주사위의 6개 면에 각각 하나의 수가 쓰여 있으며,

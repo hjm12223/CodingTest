@@ -8,78 +8,89 @@ import java.util.Set;
 
 public class PickTheDice {
 	static int N;
+	static List<Result> results = new ArrayList<>();
 
 	public static void main(String[] args) {
 		System.out.println(Arrays.toString(solution(new int[][]
 			{{1, 2, 3, 4, 5, 6}, {3, 3, 3, 3, 4, 4}, {1, 3, 3, 4, 4, 4}, {1, 1, 4, 4, 5, 5}}
 		)));
-		int[] solution = solution(
-			new int[][] {
-				{1, 2, 3, 4, 5, 6}, {3, 3, 3, 3, 4, 4}, {1, 3, 3, 4, 4, 4}, {1, 1, 4, 4, 5, 5}
-				, {1, 1, 1, 1, 1, 1}, {2, 2, 2, 2, 2, 2}, {3, 3, 3, 4, 4, 4}, {5, 1, 4, 4, 5, 5}
-				, {6, 6, 6, 6, 6, 6}, {5, 30, 20, 1, 24, 25}
-			}
-		);
-		System.out.println("solution = " + Arrays.toString(solution));
+		// int[] solution = solution(
+		// 	new int[][] {
+		// 		{1, 2, 3, 4, 5, 6}, {3, 3, 3, 3, 4, 4}, {1, 3, 3, 4, 4, 4}, {1, 1, 4, 4, 5, 5}
+		// 		, {1, 1, 1, 1, 1, 1}, {2, 2, 2, 2, 2, 2}, {3, 3, 3, 4, 4, 4}, {5, 1, 4, 4, 5, 5}
+		// 		, {6, 6, 6, 6, 6, 6}, {5, 30, 20, 1, 24, 25}
+		// 	}
+		// );
+		// System.out.println("solution = " + Arrays.toString(solution));
 	}
 
 	public static int[] solution(int[][] dice) {
 		N = dice.length;
 		List<List<Integer>> comb = new ArrayList<>();
-		getComb(comb, new ArrayList<>(255), N / 2, 0);
-		List<Result> results = new ArrayList<>();
-		Set<List<Integer>> check = new HashSet<>();
-		for (int k = 0; k < comb.size() / 2; k++) {
-			List<Integer> comb1 = comb.get(k);
-			List<Integer> comb2 = new ArrayList<>();
-			for (int i = 0; i < N; i++) {
-				if (!comb1.contains(i + 1)) comb2.add(i + 1);
-			}
-			if (check.contains(comb1) && check.contains(comb2)) continue;
-			check.add(comb1);
-			check.add(comb2);
+		getComb(comb, new ArrayList<>(), N / 2, 0); // 다이스들의 조합을 만들어 준다 nCn/2 최대 252
+		System.out.println(comb.size());
+		for (int i = 0; i < comb.size(); i++) {
+			List<Integer> first = comb.get(i);
+			List<Integer> second = new ArrayList<>();
 
-			Dice dice1 = runDice(comb1, dice);
-			Dice dice2 = runDice(comb2, dice);
-
-			Result result1 = new Result(dice1.index);
-			Result result2 = new Result(dice2.index);
-
-			find(result1, result2, dice1, dice2);
-
-			results.add(result1);
-			results.add(result2);
-		}
-		results.sort((o1, o2) -> {
-				if (o2.win == o1.win) {
-					return o2.draw - o1.draw;
-				} else {
-					return o2.win - o1.win;
+			for (int k = 1; k <= N; k++) { // 반대 다이스
+				if (!first.contains(k)) {
+					second.add(k);
 				}
 			}
+			List<Integer> firstSum = calculateSum(first, dice);
+			List<Integer> secondSum = calculateSum(second, dice);
+
+			runDice(first, second, firstSum, secondSum);
+			results.add(new Result(first.stream().mapToInt(Integer::intValue).toArray()));
+		}
+		results.sort((o1, o2) ->
+			o2.win - o1.win
 		);
-		return results.get(0).index.stream().mapToInt(Integer::valueOf).toArray();
-
+		return results.get(0).index;
 	}
 
-	private static Dice runDice(List<Integer> comb, int[][] dices) {
-		Dice dice = new Dice();
-		dice.index.addAll(comb);
-		recur(dice, comb, dices, 0, 0);
-		return dice;
+	private static List<Integer> calculateSum(List<Integer> diceIndexes, int[][] dice) {
+		List<Integer> sums = new ArrayList<>();
+		for (int index : diceIndexes) {
+			sums.addAll(getDiceSums(dice[index - 1]));
+		}
+		return sums;
 	}
 
-	private static void recur(Dice dice, List<Integer> comb, int[][] dices, int depth, int currentSum) {
-		if (depth == comb.size()) {
-			dice.comb.add(currentSum);
+	private static Set<Integer> getDiceSums(int[] dice) {
+		Set<Integer> sums = new HashSet<>();
+		makeDiceSum(dice, 0, 0, sums);
+		return sums;
+	}
+
+	private static void makeDiceSum(int[] dice, int depth, int sum, Set<Integer> list) {
+		if (depth == dice.length) {
+			list.add(sum);
 			return;
 		}
-
-		int currentDiceIndex = comb.get(depth) - 1;
-
 		for (int i = 0; i < 6; i++) {
-			recur(dice, comb, dices, depth + 1,
-				currentSum + dices[currentDiceIndex][i]);
+			if (!list.contains(sum + dice[i])) {
+				makeDiceSum(dice, depth + 1, sum + dice[i], list);
+			}
+		}
+	}
+
+	private static void runDice(List<Integer> first, List<Integer> second, List<Integer> firstSum,
+		List<Integer> secondSum) {
+
+		Result firstResult = new Result(first.stream().mapToInt(Integer::intValue).toArray());
+		Result secondResult = new Result(second.stream().mapToInt(Integer::intValue).toArray());
+		for (Integer fir : firstSum) {
+			for (Integer sec : secondSum) {
+				if (fir > sec) {
+					firstResult.win += 1;
+				} else if (fir < sec) {
+					secondResult.win += 1;
+				}
+			}
+			results.add(firstResult);
+			results.add(secondResult);
 		}
 	}
 
@@ -95,48 +106,13 @@ public class PickTheDice {
 		}
 	}
 
-	private static void find(Result result1, Result result2, Dice dice1, Dice dice2) {
-		for (int firstDice : dice1.comb) {
-			for (int secondDice : dice2.comb) {
-				if (firstDice > secondDice) {
-					result1.win++;
-					result2.lose++;
-				} else if (firstDice == secondDice) {
-					result1.draw++;
-					result2.draw++;
-				} else {
-					result1.lose++;
-					result2.win++;
-				}
-			}
-		}
-	}
-
 	private static class Result {
-		Set<Integer> index;
-		int win = 0;
-		int draw = 0;
-		int lose = 0;
+		int[] index;
+		int win;
 
-		public Result(Set<Integer> index) {
+		public Result(int[] index) {
 			this.index = index;
 		}
-
-		@Override
-		public String toString() {
-			return "Result{" +
-				"index=" + index +
-				", win=" + win +
-				", draw=" + draw +
-				", lose=" + lose +
-				'}';
-		}
-	}
-
-	private static class Dice {
-		Set<Integer> index = new HashSet<>();
-		List<Integer> comb = new ArrayList<>(255);
-
 	}
 }
 /**

@@ -1,7 +1,6 @@
 package beakjoon;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,9 +12,9 @@ public class Boj24954 {
 	static int[] potions;
 	static int minValue = Integer.MAX_VALUE;
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int N = Integer.parseInt(br.readLine());
+		int N = read();
 		potions = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
 		isVisited = new boolean[N];
 		potionsList = new ArrayList<>();
@@ -32,13 +31,18 @@ public class Boj24954 {
 				potionsList.get(i).add(new Potion(index, discountValue));
 			}
 		}
-		dfs(potions.clone(), new ArrayList<>());
+		dfs(potions.clone(), new ArrayList<>(), 0);
 		System.out.println(minValue);
 	}
 
-	private static void dfs(int[] clonePotion, List<Integer> list) {
+	private static int read() throws Exception {// 빠른 입력을 위한 함수
+		int c, n = System.in.read() & 15;
+		while ((c = System.in.read()) > 32) n = (n << 3) + (n << 1) + (c & 15);
+		return n;
+	}
+
+	private static void dfs(int[] clonePotion, List<Integer> list, int sum) {
 		if (list.size() == clonePotion.length) {
-			int sum = list.stream().mapToInt(Integer::valueOf).sum();
 			minValue = Math.min(sum, minValue);
 			return;
 		}
@@ -48,7 +52,7 @@ public class Boj24954 {
 				list.add(clonePotion[i]);
 				int[] clone = clonePotion.clone();
 				discount(clonePotion, i);
-				dfs(clonePotion, list);
+				dfs(clonePotion, list, sum + clonePotion[i]);
 				clonePotion = clone;
 				isVisited[i] = false;
 				list.remove(list.size() - 1);

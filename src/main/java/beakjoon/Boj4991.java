@@ -63,6 +63,7 @@ public class Boj4991 {
 	private static void dfs(int current, int count, int totalDist, boolean[] isVisited) {
 		if (count == dirties.size() - 1) {
 			answer = Math.min(totalDist, answer);
+			System.out.println("answer = " + answer);
 			return;
 		}
 

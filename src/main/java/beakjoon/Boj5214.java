@@ -12,7 +12,6 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Boj5214 {
-	static int result = Integer.MAX_VALUE;
 	static int N, K, M;
 
 	public static void main(String[] args) throws IOException {
@@ -34,6 +33,7 @@ public class Boj5214 {
 				graph.get(i + N).add(station);
 			}
 		}
+		System.out.println("graph = " + graph);
 		System.out.println(bfs(graph));
 	}
 

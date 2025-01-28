@@ -1,69 +1,59 @@
 package beakjoon;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Boj17071 {
+
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 
 		int N = Integer.parseInt(st.nextToken());
-		int M = Integer.parseInt(st.nextToken());
+		int K = Integer.parseInt(st.nextToken());
 
-		ArrayDeque<Node> q = new ArrayDeque<>();
+		Queue<Integer> q = new ArrayDeque<>();
 
-		q.offer(new Node(N, 0, M));
+		if (N == K) {
+			System.out.println(0);
+			return;
+		}
+
+		boolean[][] visited = new boolean[2][500_001];
+		q.offer(N);
 		int time = 0;
-		boolean[][] isVisited = new boolean[2][500_001];
+		visited[0][N] = true;
 		while (!q.isEmpty()) {
-			Node curr = q.poll();
 			time++;
-			if (curr.curr == curr.target) {
-				System.out.println(curr.cnt);
-				return;
+			K += time;
+			if (K > 500_000) {
+				bw.write(String.valueOf(-1));
+				break;
 			}
-			if (curr.curr > 500_000 || curr.target > 500_000) continue;
-			if (isVisited[time % 2][curr.curr]) continue;
-			isVisited[time % 2][curr.curr] = true;
-			if (curr.curr * 2 <= 500_000) {
-				int nextIndex = curr.curr * 2;
-				int nextCnt = curr.cnt + 1;
-				int nextTarget = curr.target + time;
-				q.addFirst(new Node(nextIndex, nextCnt, nextTarget));
+			int size = q.size();
+			for (int i = 0; i < size; i++) {
+				int curr = q.poll();
+				int[] move = new int[] {curr + 1, curr - 1, curr * 2};
+				for (int nx : move) {
+					if (nx < 0 || nx > 500_000 || visited[time % 2][nx]) continue;
+					q.offer(nx);
+					visited[time % 2][nx] = true;
+				}
 			}
-
-			if (curr.curr + 1 <= 500_000) {
-				int nextIndex = curr.curr + 1;
-				int nextCnt = curr.cnt + 1;
-				int nextTarget = curr.target + time;
-				q.addLast(new Node(nextIndex, nextCnt, nextTarget));
-			}
-
-			if (curr.curr - 1 >= 0) {
-				int nextIndex = curr.curr - 1;
-				int nextCnt = curr.cnt + 1;
-				int nextTarget = curr.target + time;
-				q.addLast(new Node(nextIndex, nextCnt, nextTarget));
+			if (visited[time % 2][K]) {
+				bw.write(String.valueOf(time));
+				break;
 			}
 		}
-		System.out.println(-1);
-	}
-
-	private static class Node {
-		int curr;
-		int cnt;
-		int target;
-
-		public Node(int curr, int cnt, int target) {
-			this.curr = curr;
-			this.cnt = cnt;
-			this.target = target;
-		}
+		bw.flush();
+		bw.close();
 	}
 }
 /*

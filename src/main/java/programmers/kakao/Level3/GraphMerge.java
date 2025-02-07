@@ -63,7 +63,6 @@ public class GraphMerge {
 			result.setCharAt(deleted.pop().index, 'X');
 		}
 		return result.toString();
-
 	}
 
 	private static class Node {
@@ -76,6 +75,3 @@ public class GraphMerge {
 		}
 	}
 }
-
-
-

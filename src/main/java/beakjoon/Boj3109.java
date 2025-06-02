@@ -3,45 +3,45 @@ package beakjoon;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.StringTokenizer;
+
 public class Boj3109 {
-    static char[][] map;
-    static int R;
-    static int C;
-    static int val;
+	static int N, M;
+	static char[][] arr;
+	static int[][] moves = new int[][] {{-1, 1}, {0, 1}, {1, 1}}; // 우, 우상, 우하
+	static int result = 0;
 
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        R = Integer.parseInt(st.nextToken());
-        C = Integer.parseInt(st.nextToken());
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+		arr = new char[N][M];
 
-        map = new char[R][C];
-        for(int i=0; i<R; i++)
-            map[i] = br.readLine().toCharArray();
+		for (int i = 0; i < N; i++) {
+			arr[i] = br.readLine().toCharArray();
+		}
+		for (int i = 0; i < N; i++) {
+			dfs(i, 0);
+		}
+		System.out.println(result);
+	}
 
-        for(int i=0; i<R; i++)
-            if(check(i, 0))
-                val++;
-        System.out.println(val);
-    }
-
-    public static boolean check(int x, int y) {
-        map[x][y] = '-';
-
-        if(y == C-1) //마지막 열(원웅이 빵집)에 도착했으면
-            return true;
-
-        if(x > 0 && map[x-1][y+1] == '.') //오른쪽 위
-            if(check(x-1, y+1))
-                return true;
-        if(map[x][y+1] == '.') //오른쪽
-            if(check(x, y+1))
-                return true;
-        if(x+1 < R && map[x+1][y+1] == '.') //오른쪽 아래
-            if(check(x+1, y+1))
-                return true;
-        return false;
-    }
+	private static boolean dfs(int x, int y) {
+		if (y == M - 1) {
+			result++;
+			return true;
+		}
+		for (int[] move : moves) {
+			int nx = x + move[0];
+			int ny = y + move[1];
+			if (nx < 0 || nx >= N || ny >= M) continue;
+			if (arr[nx][ny] == '.') {
+				arr[nx][ny] = 'x';
+				if (dfs(nx, ny)) return true;
+			}
+		}
+		return false;
+	}
 }

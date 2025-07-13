@@ -3,7 +3,6 @@ package beakjoon;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Boj1520_2 {
@@ -26,7 +25,6 @@ public class Boj1520_2 {
 			}
 		}
 		System.out.println(dp(arr, 0, 0));
-		System.out.println("dp = " + Arrays.deepToString(dp));
 
 	}
 
@@ -35,7 +33,7 @@ public class Boj1520_2 {
 		if (dp[x][y] != -1) return dp[x][y];
 
 		dp[x][y] = 0;
-		
+
 		for (int[] move : moves) {
 			int nx = x + move[0];
 			int ny = y + move[1];

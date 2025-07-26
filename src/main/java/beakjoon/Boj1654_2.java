@@ -1,0 +1,45 @@
+package beakjoon;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+public class Boj1654_2 {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+
+		int N = Integer.parseInt(st.nextToken());
+		int K = Integer.parseInt(st.nextToken());
+		long[] arr = new long[N];
+
+		for (int i = 0; i < N; i++) {
+			arr[i] = Long.parseLong(br.readLine());
+		}
+		Arrays.sort(arr);
+		long left = 1;
+		long right = arr[N - 1];
+
+		long result = 0;
+		while (left <= right) {
+			long mid = (left + right) / 2;
+			if (check(mid, arr, K)) {
+				result = mid;
+				left = mid + 1;
+			} else {
+				right = mid - 1;
+			}
+		}
+		System.out.println(result);
+	}
+
+	private static boolean check(long mid, long[] arr, int K) {
+		int cnt = 0;
+		for (int i = 0; i < arr.length; i++) {
+			cnt += (int)(arr[i] / mid);
+		}
+		return cnt >= K;
+	}
+}

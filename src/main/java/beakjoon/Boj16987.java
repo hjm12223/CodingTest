@@ -1,0 +1,61 @@
+package beakjoon;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
+public class Boj16987 {
+	static int[] weights;
+	static int[] durability;
+	static int N;
+	static int result = Integer.MIN_VALUE;
+
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		N = Integer.parseInt(st.nextToken());
+		weights = new int[N];
+		durability = new int[N];
+		for (int i = 0; i < N; i++) {
+			st = new StringTokenizer(br.readLine());
+			int dur = Integer.parseInt(st.nextToken());
+			int weight = Integer.parseInt(st.nextToken());
+			durability[i] = dur;
+			weights[i] = weight;
+		}
+
+		backTracking(0);
+		System.out.println(result);
+	}
+
+	private static void backTracking(int idx) {
+		int cnt = countBreak();
+		if (idx == N || cnt >= N - 1) {
+			result = Math.max(cnt, result);
+			return;
+		}
+		if (durability[idx] <= 0) {
+			backTracking(idx + 1);
+			return;
+		}
+		for (int i = 0; i < N; i++) {
+			if (durability[i] <= 0 || i == idx) continue;
+			durability[i] -= weights[idx];
+			durability[idx] -= weights[i];
+			backTracking(idx + 1);
+			durability[i] += weights[idx];
+			durability[idx] += weights[i];
+		}
+	}
+
+	public static int countBreak() {
+		int cnt = 0;
+		for (int i = 0; i < N; i++) {
+			if (durability[i] <= 0) {
+				cnt++;
+			}
+		}
+		return cnt;
+	}
+}

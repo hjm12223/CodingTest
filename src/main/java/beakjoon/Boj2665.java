@@ -21,7 +21,7 @@ public class Boj2665 {
 
 		N = Integer.parseInt(st.nextToken());
 		arr = new int[N][N];
-		visited = new boolean[N + 1][N][N];
+		visited = new boolean[N + 1][N][N];//[벽을 부셨는가][next x][next y]
 
 		for (int i = 0; i < N; i++) {
 			arr[i] = Arrays.stream(br.readLine().split("")).mapToInt(Integer::parseInt).toArray();

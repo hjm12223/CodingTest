@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Boj1969 {
-	static String[] dnas = new String[] {"a", "c", "g", "t"};
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -18,7 +17,7 @@ public class Boj1969 {
 		for (int i = 0; i < N; i++) {
 			dnaStrings[i] = br.readLine();
 		}
-		
+
 		StringBuilder result = new StringBuilder();
 		int totalHammingDistance = 0;
 

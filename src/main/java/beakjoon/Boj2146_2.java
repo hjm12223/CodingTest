@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
@@ -28,13 +27,42 @@ public class Boj2146_2 {
 			}
 		}
 		int markValue = 2;
+		int result = Integer.MAX_VALUE;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
-				if (arr[i][j] != 0)
+				if (arr[i][j] != 0 && !visited[i][j])
 					mark(i, j, markValue++);
 			}
 		}
-		System.out.println(Arrays.deepToString(arr));
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (arr[i][j] != 0)
+					result = Math.min(run(i, j, arr[i][j]), result);
+			}
+		}
+		System.out.println(result - 1);
+	}
+
+	private static int run(int x, int y, int startValue) {
+		visited = new boolean[N][N];
+		visited[x][y] = true;
+		Queue<int[]> q = new ArrayDeque<>();
+		q.offer(new int[] {x, y, 0});
+		while (!q.isEmpty()) {
+			int[] curr = q.poll();
+			if (arr[curr[0]][curr[1]] != 0 && arr[curr[0]][curr[1]] != startValue)
+				return curr[2];
+			for (int[] move : moves) {
+				int nx = curr[0] + move[0];
+				int ny = curr[1] + move[1];
+				if (nx < 0 || ny < 0 || nx >= N || ny >= N || arr[nx][ny] == startValue) continue;
+				if (!visited[nx][ny]) {
+					visited[nx][ny] = true;
+					q.offer(new int[] {nx, ny, curr[2] + 1});
+				}
+			}
+		}
+		return Integer.MAX_VALUE;
 	}
 
 	private static void mark(int x, int y, int markValue) {

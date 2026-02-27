@@ -1,53 +1,74 @@
 package beakjoon;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Boj1713 {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
 		int N = Integer.parseInt(br.readLine());
-		int M = Integer.parseInt(br.readLine());
-		int[] arr = new int[M];
+		int K = Integer.parseInt(br.readLine());
+
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		Queue<Node> pq = new PriorityQueue<>();
 
-		Map<Integer, Integer> map = new HashMap<>();
-
-		for (int i = 0; i < M; i++) {
-			int value = Integer.parseInt(st.nextToken());
-		}
-	}
-
-	static class Node implements Comparator<Node> {
-		int value;
-		int idx;
-		int recommendation;
-
-		public Node(int value, int idx, int recommendation) {
-			this.value = value;
-			this.idx = idx;
-			this.recommendation = recommendation;
-		}
-
-		@Override
-		public int compare(Node o1, Node o2) {
-			if (o1.recommendation == o2.recommendation) {
-				return o1.idx - o2.idx;
+		Map<Integer, Student> map = new HashMap<>();
+		Queue<Student> pq = new PriorityQueue<>((o1, o2) -> {
+			if (o1.priority == o2.priority) {
+				return o1.time - o2.time;
+			}
+			return o1.priority - o2.priority;
+		});
+		int time = 0;
+		while (st.hasMoreTokens()) {
+			int key = Integer.parseInt(st.nextToken());
+			time++;
+			if (map.containsKey(key)) {
+				Student student = map.get(key);
+				pq.remove(student);
+				student.priority++;
+				pq.offer(student);
 			} else {
-				return o2.recommendation - o1.recommendation;
+				if (pq.size() == N) {
+					Student student = pq.poll();
+					map.remove(student.num);
+				}
+				Student student = new Student(key, time, 1);
+				pq.offer(student);
+				map.put(key, student);
 			}
 		}
+		List<Integer> list = new ArrayList<>();
+
+		while (!pq.isEmpty()) {
+			list.add(pq.poll().num);
+		}
+
+		Collections.sort(list);
+		StringBuilder sb = new StringBuilder();
+
+		for (Integer i : list) {
+			sb.append(i).append(" ");
+		}
+		System.out.println(sb);
 	}
-	/*
-	
-	 */
+
+	static class Student {
+		int num;
+		int time;
+		int priority;
+
+		public Student(int num, int time, int priority) {
+			this.num = num;
+			this.time = time;
+			this.priority = priority;
+		}
+	}
 }

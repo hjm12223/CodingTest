@@ -12,6 +12,16 @@ public class Boj1359 {
 	static boolean[] visited;
 	static int N, M, K;
 
+	/*
+	 *
+	 * 1 2 3
+	 * k = 1
+	 * m = 1
+	 * 1 2 3
+	 * 3
+	 * 즉 복권이랑 똑같다 결국 확률을 구하는 문제 N <= 10 완탐을 기본전제를 깔고 생각을 해
+	 *8C4  =  70 ^2 = O(4900)
+	 */
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());

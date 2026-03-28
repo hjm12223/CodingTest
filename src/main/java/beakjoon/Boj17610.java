@@ -10,6 +10,11 @@ public class Boj17610 {
 	static int[] arr;
 	static boolean[] visited;
 
+	/**
+	 1. 무게추를 오른족에 넣는경우
+	 2. 무게추를 왼쪽에 두는경우
+	 3. 무게추를 안두는 경우
+	 */
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		N = Integer.parseInt(br.readLine());

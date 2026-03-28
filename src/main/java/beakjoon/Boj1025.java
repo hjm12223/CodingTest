@@ -23,8 +23,8 @@ public class Boj1025 {
 		}
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
-				for (int dr = -N + 1; dr < N; dr++) {
-					for (int dc = -M + 1; dc < M; dc++) {
+				for (int dr = -N + 1; dr < N; dr++) { // 공차 row
+					for (int dc = -M + 1; dc < M; dc++) { // 공차 col
 						if (dr == 0 && dc == 0) {
 							if (check(arr[i][j])) result = Math.max(result, arr[i][j]);
 							continue;
@@ -49,6 +49,31 @@ public class Boj1025 {
 
 	}
 
+	/**
+	 move {{오른쪽 왼쪽 아래 위 대각선 } } 8 가지의 무브먼트를 두고 * 공차 문제를 풀었는데
+	 틀린거야
+	 진짜 내가 보기에는 답이없음
+
+	 그래서 그냥 챗지피티를 썻다
+	 1시간썻나
+
+	 1
+	 10
+	 100
+	 1000
+
+	 2차원이다 보니깐
+	 ...
+	 ...
+	 ...
+	 ---
+	 1..
+	 ..1
+
+	 1....
+	 ..1..
+	 ....1
+	 */
 	private static boolean check(int n) {
 		if (n < 0) return false;
 		int sqrt = (int)Math.sqrt(n);
